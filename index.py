@@ -23,8 +23,7 @@ def welcome(update, context) -> None:
 def find_movie(update, context):
     search_results = update.message.reply_text("𝐒𝐞𝐚𝐫𝐜𝐡 𝐑𝐞𝐬𝐮𝐥𝐭𝐬........")
     query = update.message.text
-    movies_list = search_movies(query)
-    if movies_list:
+    if movies_list := search_movies(query):
         keyboards = []
         for movie in movies_list:
             keyboard = InlineKeyboardButton(movie["title"], callback_data=movie["id"])
@@ -41,10 +40,8 @@ def movie_result(update, context) -> None:
     response = requests.get(s["img"])
     img = BytesIO(response.content)
     query.message.reply_photo(photo=img, caption=f"🎥 {s['title']}")
-    link = ""
     links = s["links"]
-    for i in links:
-        link += "Open Link :-" + i + "\n" + links[i] + "\n\n"
+    link = "".join(f"Open Link :-{i}" + "\n" + links[i] + "\n\n" for i in links)
     caption = f"⚡ Fast Download Links :-\n\n{link}"
     if len(caption) > 4095:
         for x in range(0, len(caption), 4095):
@@ -70,7 +67,7 @@ def index():
     return 'Hello World!'
 
 
-@app.route('/{}'.format(TOKEN), methods=['GET', 'POST'])
+@app.route(f'/{TOKEN}', methods=['GET', 'POST'])
 def respond():
     update = Update.de_json(request.get_json(force=True), bot)
     setup().process_update(update)
@@ -79,8 +76,7 @@ def respond():
 
 @app.route('/setwebhook', methods=['GET', 'POST'])
 def set_webhook():
-    s = bot.setWebhook('{URL}/{HOOK}'.format(URL=URL, HOOK=TOKEN))
-    if s:
+    if s := bot.setWebhook('{URL}/{HOOK}'.format(URL=URL, HOOK=TOKEN)):
         return "webhook setup ok"
     else:
         return "webhook setup failed"
