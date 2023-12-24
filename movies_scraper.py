@@ -23,8 +23,9 @@ def search_movies(query):
 
 def get_movie(query):
     movie_details = {}
-    movie_page_link = BeautifulSoup(requests.get(f"{url_list[query]}").text, "html.parser")
-    if movie_page_link:
+    if movie_page_link := BeautifulSoup(
+        requests.get(f"{url_list[query]}").text, "html.parser"
+    ):
         title = movie_page_link.find("div", {'class': 'mvic-desc'}).h3.text
         movie_details["title"] = title
         img = movie_page_link.find("div", {'class': 'mvic-thumb'})['data-bg']
